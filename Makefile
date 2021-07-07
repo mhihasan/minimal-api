@@ -1,6 +1,6 @@
 .PHONY: setup_test
 setup_test:
-	docker compose up -d
+	docker-compose up -d
 
 .PHONY: test
 test: setup_test
