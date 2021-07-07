@@ -46,7 +46,9 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Install dependencies
-        run: make install
+        run: |
+          scripts/install_docker_compose.sh
+          make install
 
       - name: Test with pytest
         run: make test
