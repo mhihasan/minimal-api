@@ -4,7 +4,13 @@ from werkzeug.test import Client
 from src.application import create_app
 from src.utils.db_utils import get_mongodb_name
 
-MONGO_TEST_DB = get_mongodb_name(stage="test")
+MONGO_TEST_DB = get_mongodb_name()
+
+test_settings = {
+    "databases": {"mongodb": {"name": "webapp", "test": {"name": "webapp-test"}}},
+    "redis": {"host": "localhost", "port": 6379},
+    "env": {"stage": "test", "log_level": "INFO"},
+}
 
 
 @pytest.fixture(autouse=True)
@@ -19,4 +25,4 @@ def mongodb():
 
 @pytest.fixture
 def client():
-    return Client(create_app(test_app=True))
+    return Client(create_app(test_settings, test_app=True))

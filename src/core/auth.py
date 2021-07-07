@@ -20,7 +20,6 @@ def login_required(view=None, admin_only=False):
             raise Unauthorized()
 
         request.user = user
-
         return view(request, *args, **kwargs)
 
     return wrapper

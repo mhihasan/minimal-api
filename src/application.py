@@ -11,40 +11,38 @@ from src.core.urls import url_map
 logger = logging.getLogger(__name__)
 
 
-def _init_db(config):
-    if config.get("databases") is None:
+def _init_db(databases, test_app=True):
+    if databases is None:
         return
 
-    for db_type, db_detail in config["databases"].items():
+    for db_type, db_detail in databases.items():
         if db_type == "mongodb":
             from mongoengine import connect
 
-            if config.get("test_app"):
-                connect(db_detail["test"]["name"], alias=db_detail["test"]["name"])
-            else:
-                connect(db_detail["name"], alias=db_detail["name"])
+            connect(db_detail["name"], alias=db_detail["name"])
 
 
-def _init_redis(config):
-    if config.get("redis") is None:
+def _init_redis(redis_conf):
+    if redis_conf is None:
         return
 
     import redis
 
-    redis_detail = config["redis"]
-    redis.Redis(redis_detail["host"], redis_detail["port"])
+    redis.Redis(redis_conf["host"], redis_conf["port"])
 
 
-def _setup_env(config):
-    os.environ["LOG_LEVEL"] = config.get("log_level", "INFO")
-    os.environ["STAGE"] = config.get("stage", "test")
+def _setup_env(env):
+    if env is None:
+        return
+    os.environ["LOG_LEVEL"] = env.get("log_level", "INFO")
+    os.environ["STAGE"] = env.get("stage", "test")
 
 
 class App(object):
     def __init__(self, config):
-        _init_redis(config)
-        _init_db(config)
-        _setup_env(config)
+        _init_redis(config.get("redis"))
+        _init_db(config.get("databases"))
+        _setup_env(config.get("env"))
         self.url_map = url_map
 
     def __call__(self, environ, start_response):

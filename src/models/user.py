@@ -10,14 +10,13 @@ logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 
 STAGE = os.environ.get("STAGE", "test")
 USER_COLLECTION = os.environ.get("USER_COLLECTION", f"webapp-{STAGE}-user")
-MONGODB_NAME = get_mongodb_name(STAGE)
 
 
 class User(Document):
     meta = {
         "allow_inheritance": False,
         "collection": USER_COLLECTION,
-        "db_alias": MONGODB_NAME,
+        "db_alias": get_mongodb_name(),
         "auto_create_index": False,
     }
     if STAGE == "test":
