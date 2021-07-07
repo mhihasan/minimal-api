@@ -4,7 +4,6 @@ import os
 import redis
 from werkzeug import run_simple
 from werkzeug.exceptions import HTTPException
-from werkzeug.middleware.shared_data import SharedDataMiddleware
 from werkzeug.wrappers import Response, Request
 from src.core import settings
 from src.views.api import views
@@ -19,9 +18,17 @@ def _init_db(config):
 
     for db_type, db_detail in config["databases"].items():
         if db_type == "mongodb":
+            print("db_type", db_type)
             from mongoengine import connect
 
-            connect(db_detail["name"], alias=db_detail["name"])
+            if config.get("test_app"):
+                print(
+                    "test",
+                )
+                connect(db_detail["test"]["name"], alias=db_detail["test"]["name"])
+            else:
+                print("conn", db_detail["name"])
+                connect(db_detail["name"], alias=db_detail["name"])
 
 
 def _init_redis(config):
@@ -65,18 +72,16 @@ class App(object):
         return response(environ, start_response)
 
 
-def create_app(config, with_static=True):
+def create_app(config=None, test_app=True):
+    if config is None:
+        config = {}
+    config.update({"test_app": test_app})
     app = App(config)
-    if with_static:
-        app.wsgi_app = SharedDataMiddleware(
-            app.wsgi_app,
-            {"/static": os.path.join(os.path.dirname(__file__), "../static")},
-        )
     return app
 
 
 if __name__ == "__main__":
-    os.environ["LOG_LEVEL"] = "INFO"
-    os.environ["STAGE"] = "test"
-    app = create_app(settings.config)
+    os.environ["LOG_LEVEL"] = settings.config["log_level"]
+    os.environ["STAGE"] = settings.config["stage"]
+    app = create_app(settings.config, test_app=False)
     run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True)

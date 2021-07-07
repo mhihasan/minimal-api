@@ -3,19 +3,21 @@ import os
 
 from mongoengine import Document, StringField, BooleanField
 
+from src.utils.db_utils import get_mongodb_name
+
 logger = logging.getLogger(__name__)
 logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 
 STAGE = os.environ.get("STAGE", "test")
-COLLECTION_NAME = os.environ.get("COLLECTION_NAME", f"webapp-{STAGE}-user")
-DB_NAME = os.environ.get("DB_NAME", f"webapp-{STAGE}")
+USER_COLLECTION = os.environ.get("USER_COLLECTION", f"webapp-{STAGE}-user")
+MONGODB_NAME = get_mongodb_name(STAGE)
 
 
 class User(Document):
     meta = {
         "allow_inheritance": False,
-        "collection": COLLECTION_NAME,
-        "db_alias": DB_NAME,
+        "collection": USER_COLLECTION,
+        "db_alias": MONGODB_NAME,
         "auto_create_index": False,
     }
     if STAGE == "test":

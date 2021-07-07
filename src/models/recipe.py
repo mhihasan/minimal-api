@@ -2,20 +2,21 @@ import logging
 import os
 
 from mongoengine import Document, StringField, IntField, BooleanField, ListField
+from src.utils.db_utils import get_mongodb_name
 
 logger = logging.getLogger(__name__)
 logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
 
 STAGE = os.environ.get("STAGE", "test")
 COLLECTION_NAME = os.environ.get("RECIPE_COLLECTION_NAME", f"webapp-{STAGE}-recipe")
-DB_NAME = os.environ.get("DB_NAME", f"webapp-{STAGE}")
+MONGODB_NAME = get_mongodb_name(STAGE)
 
 
 class Recipe(Document):
     meta = {
         "allow_inheritance": False,
         "collection": COLLECTION_NAME,
-        "db_alias": DB_NAME,
+        "db_alias": MONGODB_NAME,
         "indexes": ["name"],
         "auto_create_index": False,
     }
