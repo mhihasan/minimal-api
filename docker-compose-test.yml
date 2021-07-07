@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  redis_test:
+    container_name: "redis-test"
+    image: redis:alpine
+    ports:
+      - 6379:6379
+  mongodb_test:
+    container_name: "mongodb-test"
+    image: mongo:4.0.4
+    ports:
+      - 27017-27019:27017-27019

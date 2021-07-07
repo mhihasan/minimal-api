@@ -6,7 +6,6 @@ url_map = Map()
 def url(rule, **kwargs):
     def decorated(func):
         kwargs["endpoint"] = func.__name__
-        print("kwargs", kwargs)
         url_map.add(Rule(rule, **kwargs))
         return func
 

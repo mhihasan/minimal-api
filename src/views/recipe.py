@@ -42,13 +42,13 @@ def update_recipe(request, recipe_id):
         logger.info("Rating cannot be changed")
         data.pop("rating")
 
-    Recipe.objects(id=recipe_id).update_one(**data, full_result=True)
-    return response(data)
+    recipe = Recipe(id=recipe_id).update(**data)
+    return response(recipe.to_json())
 
 
 @login_required
 def delete_recipe(request, recipe_id):
-    Recipe.objects(id=recipe_id).delete()
+    Recipe(id=recipe_id).delete()
     return response(status_code=204)
 
 

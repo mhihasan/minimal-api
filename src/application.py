@@ -19,7 +19,12 @@ def _init_db(databases, test_app=True):
         if db_type == "mongodb":
             from mongoengine import connect
 
-            connect(db_detail["name"], alias=db_detail["name"])
+            connect(
+                host=db_detail["host"],
+                port=db_detail["port"],
+                db=db_detail["name"],
+                alias=db_detail["name"],
+            )
 
 
 def _init_redis(redis_conf):
@@ -82,4 +87,4 @@ def create_app(config=None, test_app=True):
 
 if __name__ == "__main__":
     app = create_app(settings.config, test_app=False)
-    run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True)
+    run_simple("", 5000, app, use_debugger=True, use_reloader=True)

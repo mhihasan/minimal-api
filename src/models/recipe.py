@@ -35,3 +35,8 @@ class Recipe(Document):
         super().update(add_to_set__ratings=rating)
         self.reload()
         return self
+
+    def update(self, **kwargs):
+        super().update(**kwargs)
+        self.reload()
+        return self
