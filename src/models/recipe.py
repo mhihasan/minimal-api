@@ -19,8 +19,8 @@ class Recipe(Document):
         "indexes": ["name"],
         "auto_create_index": False,
     }
-    # if STAGE == "test":
-    #     meta["auto_create_index"] = True
+    if STAGE == "test":
+        meta["auto_create_index"] = True
 
     name = StringField(required=True)
     difficulty = IntField(default=1, min_value=1, max_value=3)
