@@ -1,0 +1,9 @@
+-r prod.txt
+
+pytest
+pytest-cov
+pytest-env
+
+requests
+
+pre-commit
