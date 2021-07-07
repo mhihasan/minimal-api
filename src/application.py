@@ -1,7 +1,6 @@
 import logging
 import os
 
-import redis
 from werkzeug import run_simple
 from werkzeug.exceptions import HTTPException
 from werkzeug.wrappers import Response, Request
@@ -18,16 +17,11 @@ def _init_db(config):
 
     for db_type, db_detail in config["databases"].items():
         if db_type == "mongodb":
-            print("db_type", db_type)
             from mongoengine import connect
 
             if config.get("test_app"):
-                print(
-                    "test",
-                )
                 connect(db_detail["test"]["name"], alias=db_detail["test"]["name"])
             else:
-                print("conn", db_detail["name"])
                 connect(db_detail["name"], alias=db_detail["name"])
 
 
@@ -35,14 +29,22 @@ def _init_redis(config):
     if config.get("redis") is None:
         return
 
+    import redis
+
     redis_detail = config["redis"]
     redis.Redis(redis_detail["host"], redis_detail["port"])
+
+
+def _setup_env(config):
+    os.environ["LOG_LEVEL"] = config.get("log_level", "INFO")
+    os.environ["STAGE"] = config.get("stage", "test")
 
 
 class App(object):
     def __init__(self, config):
         _init_redis(config)
         _init_db(config)
+        _setup_env(config)
         self.url_map = url_map
 
     def __call__(self, environ, start_response):
@@ -81,7 +83,5 @@ def create_app(config=None, test_app=True):
 
 
 if __name__ == "__main__":
-    os.environ["LOG_LEVEL"] = settings.config["log_level"]
-    os.environ["STAGE"] = settings.config["stage"]
     app = create_app(settings.config, test_app=False)
     run_simple("localhost", 5000, app, use_debugger=True, use_reloader=True)
