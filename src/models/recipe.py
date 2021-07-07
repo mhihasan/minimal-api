@@ -5,9 +5,9 @@ from mongoengine import Document, StringField, IntField, BooleanField, ListField
 from src.utils.db_utils import get_mongodb_name
 
 logger = logging.getLogger(__name__)
-logger.setLevel(os.environ.get("LOG_LEVEL", "INFO"))
+logger.setLevel(os.environ["LOG_LEVEL"])
 
-STAGE = os.environ.get("STAGE", "test")
+STAGE = os.environ["STAGE"]
 COLLECTION_NAME = os.environ.get("RECIPE_COLLECTION_NAME", f"webapp-{STAGE}-recipe")
 
 
